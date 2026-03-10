@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+httpx
+crawl4ai
+playwright
+beautifulsoup4
+PyGithub
+sqlmodel
+spacy
+scikit-learn
+streamlit
+pydantic
+apscheduler
+supabase
+python-dotenv

@@ -33,6 +33,16 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
+    - name: Commit database
+      run: |
+        git config --local user.email "securematehelp@gmail.com"
+        git config --local user.name "GitHub Action"
+        git add agent_hunter.db
+        git diff --staged --quiet || git commit -m "chore: update agent database [skip ci]"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
     - name: Echo summary
       run: |
         echo "Scan completed"

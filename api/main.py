@@ -2,7 +2,9 @@ from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel, create_engine, Session, select, func
 from typing import List, Optional, Dict
+from datetime import datetime
 from models.agent_profile import AgentProfile
+from models.scan_state import ScanState
 
 DATABASE_URL = "sqlite:///agent_hunter.db"
 engine = create_engine(DATABASE_URL, echo=False)
@@ -113,3 +115,27 @@ def get_dead_agents(session: Session = Depends(get_session)):
 @app.get("/agents/online", response_model=List[AgentProfile])
 def get_online_agents(session: Session = Depends(get_session)):
     return session.exec(select(AgentProfile).where(AgentProfile.status == "online")).all()
+
+@app.get("/scan-state", response_model=List[ScanState])
+def get_scan_states(session: Session = Depends(get_session)):
+    return session.exec(select(ScanState)).all()
+
+@app.post("/scan-state", response_model=ScanState)
+def upsert_scan_state(state_data: Dict, session: Session = Depends(get_session)):
+    existing = session.exec(
+        select(ScanState).where(ScanState.topic == state_data["topic"])
+    ).first()
+    
+    if existing:
+        for key, value in state_data.items():
+            if hasattr(existing, key):
+                setattr(existing, key, value)
+        existing.last_updated = datetime.utcnow()
+        state = existing
+    else:
+        state = ScanState(**state_data)
+        session.add(state)
+    
+    session.commit()
+    session.refresh(state)
+    return state

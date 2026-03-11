@@ -1,6 +1,6 @@
-# 📚 AgentScout — Technical Documentation
+# 📚 AgentHunter — Technical Documentation
 
-Complete technical reference for AgentScout's data collection, storage, and usage.
+Complete technical reference for AgentHunter's data collection, storage, and usage.
 
 ## 📋 Table of Contents
 
@@ -15,7 +15,7 @@ Complete technical reference for AgentScout's data collection, storage, and usag
 
 ## 🔄 How It Works
 
-AgentScout operates on a continuous discovery cycle:
+AgentHunter operates on a continuous discovery cycle:
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -140,11 +140,11 @@ CREATE INDEX ix_agentprofile_source_url ON agentprofile (source_url);
 | `agent_type` | VARCHAR | Type classification | "multi-agent", "chatbot", "crawler" |
 | `risk_level` | VARCHAR | Safety assessment | "safe", "suspicious", "rogue" |
 | `stars` | INTEGER | GitHub stars or HF likes | 15420 |
-| `first_seen` | DATETIME | When first discovered | "2024-03-10T12:00:00" |
-| `last_seen` | DATETIME | Last scan update | "2024-03-11T06:00:00" |
+| `first_seen` | DATETIME | When first discovered | "2026-03-10T12:00:00" |
+| `last_seen` | DATETIME | Last scan update | "2026-03-11T06:00:00" |
 | `raw_description` | TEXT | Original description | "Multi-agent conversation framework" |
 | `status` | VARCHAR | Health check status | "online", "dead", "unknown" |
-| `last_checked` | DATETIME | Last health check | "2024-03-11T08:30:00" |
+| `last_checked` | DATETIME | Last health check | "2026-03-11T08:30:00" |
 | `response_time_ms` | INTEGER | Response time in milliseconds | 234 |
 
 ### Data Types and Constraints
@@ -210,8 +210,8 @@ curl "http://localhost:8000/agents?model=gpt-4&limit=10"
     "stars": 15420,
     "status": "online",
     "response_time_ms": 234,
-    "first_seen": "2024-03-10T12:00:00",
-    "last_seen": "2024-03-11T06:00:00",
+    "first_seen": "2026-03-10T12:00:00",
+    "last_seen": "2026-03-11T06:00:00",
     "raw_description": "Multi-agent conversation framework"
   }
 ]
@@ -281,7 +281,7 @@ Update specific fields of an agent.
 {
   "status": "online",
   "response_time_ms": 150,
-  "last_checked": "2024-03-11T10:00:00"
+  "last_checked": "2026-03-11T10:00:00"
 }
 ```
 
@@ -554,4 +554,4 @@ HEALTH_TIMEOUT = 10  # seconds per URL check
 
 ---
 
-**This documentation covers the complete technical implementation of AgentScout. For setup instructions, see [GUIDE.md](GUIDE.md).**
+**This documentation covers the complete technical implementation of AgentHunter. For setup instructions, see [GUIDE.md](GUIDE.md).**

@@ -1,6 +1,6 @@
-# 📖 AgentScout — Complete Setup Guide
+# 📖 AgentHunter — Complete Setup Guide
 
-Everything you need to run AgentScout locally in GitHub Codespaces.
+Everything you need to run AgentHunter locally in GitHub Codespaces.
 
 ## 🧰 Prerequisites
 
@@ -236,7 +236,7 @@ The `continue-on-error: true` setting means one crash doesn't lose everything.
 
 ## 🗺️ What's Next
 
-Ideas to extend AgentScout:
+Ideas to extend AgentHunter:
 - Add Telegram bot directory scanner
 - Add HuggingFace Spaces scanner (demos, not just models)
 - Add agent comparison/benchmarking

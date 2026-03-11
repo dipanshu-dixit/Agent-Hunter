@@ -21,7 +21,7 @@ streamlit run dashboard/app.py &
 sleep 2
 
 echo ""
-echo "🚀 AgentScout running!"
+echo "🚀 AgentHunter running!"
 echo "📊 Dashboard: http://localhost:8501"
 echo "🔌 API: http://localhost:8000/docs"
 echo ""

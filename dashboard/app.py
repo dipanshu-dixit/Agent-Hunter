@@ -7,7 +7,7 @@ import time
 
 API_BASE = "http://localhost:8000"
 
-st.set_page_config(page_title="AgentScout", page_icon="🔭", layout="wide")
+st.set_page_config(page_title="AgentHunter", page_icon="🔭", layout="wide")
 
 def fetch_data():
     try:
@@ -21,7 +21,7 @@ def fetch_data():
     return None, None
 
 def main():
-    st.title("🔭 AgentScout - Live AI Agent Radar")
+    st.title("🔭 AgentHunter - Live AI Agent Radar")
     
     # Health check button
     if st.button("🔍 Check Agent Health"):

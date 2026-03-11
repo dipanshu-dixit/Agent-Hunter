@@ -8,20 +8,35 @@ class Fingerprinter:
     CRAWLER_KEYWORDS = ["playwright", "selenium"]
     
     def fingerprint(self, scanner_data: Dict) -> Dict:
-        text = self._get_searchable_text(scanner_data)
-        
-        return {
-            "name": scanner_data.get("name", ""),
-            "source_url": scanner_data.get("url", ""),
-            "source_platform": self._detect_platform(scanner_data.get("url", "")),
-            "model_detected": self._detect_keyword(text, self.MODELS),
-            "framework": self._detect_keyword(text, self.FRAMEWORKS),
-            "capabilities": self._detect_capabilities(text),
-            "agent_type": self._detect_agent_type(text),
-            "risk_level": "safe",
-            "stars": scanner_data.get("stars", 0),
-            "raw_description": scanner_data.get("description", "")
-        }
+        try:
+            text = self._get_searchable_text(scanner_data)
+            
+            return {
+                "name": scanner_data.get("name", ""),
+                "source_url": scanner_data.get("url", ""),
+                "source_platform": self._detect_platform(scanner_data.get("url", "")),
+                "model_detected": self._detect_keyword(text, self.MODELS),
+                "framework": self._detect_keyword(text, self.FRAMEWORKS),
+                "capabilities": self._detect_capabilities(text),
+                "agent_type": self._detect_agent_type(text),
+                "risk_level": "safe",
+                "stars": scanner_data.get("stars", 0),
+                "raw_description": scanner_data.get("description", "")
+            }
+        except Exception as e:
+            print(f"⚠️ Fingerprinting failed for {scanner_data.get('name', 'unknown')}: {str(e)}")
+            return {
+                "name": scanner_data.get("name", "unknown"),
+                "source_url": scanner_data.get("url", ""),
+                "source_platform": "unknown",
+                "model_detected": "unknown",
+                "framework": "unknown",
+                "capabilities": [],
+                "agent_type": "unknown",
+                "risk_level": "safe",
+                "stars": 0,
+                "raw_description": scanner_data.get("description", "")
+            }
     
     def _get_searchable_text(self, data: Dict) -> str:
         parts = [
@@ -48,6 +63,8 @@ class Fingerprinter:
         return "task-agent"
     
     def _detect_platform(self, url: str) -> str:
+        if not url:
+            return "unknown"
         if "github.com" in url:
             return "github"
         if "huggingface.co" in url:

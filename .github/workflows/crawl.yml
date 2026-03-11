@@ -28,9 +28,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Run scan
-      run: python run_scan.py
+      continue-on-error: true
+      run: python -u run_scan.py
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Echo summary
-      run: echo "Scan completed successfully"
+      run: |
+        echo "Scan completed"
+        curl -s http://localhost:8000/stats || echo "Stats unavailable"

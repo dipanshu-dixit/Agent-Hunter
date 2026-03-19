@@ -1,0 +1,1 @@
+{"models": {"claude": 297, "unknown": 1101, "gemini": 88, "gpt-4": 114, "llama": 172, "mistral": 5, "gpt-3.5": 5, "qwen": 16, "mixtral": 3}, "frameworks": {"unknown": 1448, "langchain": 264, "autogen": 14, "crewai": 68, "llamaindex": 4, "semantic-kernel": 3}, "agent_types": {"task-agent": 1658, "multi-agent": 129, "crawler": 14}}

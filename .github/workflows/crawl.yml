@@ -5,11 +5,16 @@ on:
     - cron: '0 */6 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   crawl:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -20,8 +25,7 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Restore database from snapshot
-      run: |
-        python restore_snapshot.py
+      run: python restore_snapshot.py
 
     - name: Start API server
       run: |
@@ -45,14 +49,39 @@ jobs:
 
     - name: Export JSON snapshot
       run: |
-        curl -s "http://localhost:8000/agents?limit=99999" -o agents_data.json
-        curl -s "http://localhost:8000/stats" -o stats_data.json
-        echo "Exported $(wc -c < agents_data.json) bytes — $(python3 -c "import json; print(len(json.load(open('agents_data.json'))))"  ) total agents"
+        python3 -c "
+import json, sqlite3
+
+conn = sqlite3.connect('agent_hunter.db')
+conn.row_factory = sqlite3.Row
+agents = [dict(r) for r in conn.execute('SELECT * FROM agentprofile').fetchall()]
+for a in agents:
+    if isinstance(a.get('capabilities'), str):
+        try:
+            a['capabilities'] = json.loads(a['capabilities'])
+        except:
+            a['capabilities'] = []
+conn.close()
+
+with open('agents_data.json', 'w') as f:
+    json.dump(agents, f)
+
+# stats
+from collections import Counter
+models = Counter(a.get('model_detected','unknown') for a in agents)
+frameworks = Counter(a.get('framework','unknown') for a in agents)
+types = Counter(a.get('agent_type','unknown') for a in agents)
+stats = {'models': dict(models), 'frameworks': dict(frameworks), 'agent_types': dict(types)}
+with open('stats_data.json', 'w') as f:
+    json.dump(stats, f)
+
+print(f'Exported {len(agents)} total agents to agents_data.json')
+"
 
     - name: Commit snapshot
       run: |
-        git config --local user.email "dipanshudixit206@gmail.com"
-        git config --local user.name "dipanshu-dixit"
+        git config --local user.email "action@github.com"
+        git config --local user.name "AgentHunter Bot"
         git add agents_data.json stats_data.json
         git diff --staged --quiet || git commit -m "chore: update agent snapshot [skip ci]"
         git push

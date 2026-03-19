@@ -26,4 +26,5 @@ Thumbs.db
 *.tmp
 .gitignore.tmp
 
-# Note: agent_hunter.db is intentionally NOT ignored - we want to track it
+# SQLite binary — tracked via JSON snapshots (agents_data.json) instead
+agent_hunter.db

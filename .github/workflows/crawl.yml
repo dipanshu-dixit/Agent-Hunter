@@ -1,0 +1,60 @@
+name: Agent Crawl
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Restore database from snapshot
+      run: |
+        python restore_snapshot.py
+
+    - name: Start API server
+      run: |
+        uvicorn api.main:app --host 0.0.0.0 --port 8000 &
+        echo "Waiting for API to be ready..."
+        for i in {1..30}; do
+          curl -s http://localhost:8000/health && echo "API ready!" && break
+          echo "Attempt $i/30..."
+          sleep 2
+        done
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Run scan
+      continue-on-error: true
+      run: python -u run_scan.py
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    - name: Export JSON snapshot
+      run: |
+        curl -s "http://localhost:8000/agents?limit=99999" -o agents_data.json
+        curl -s "http://localhost:8000/stats" -o stats_data.json
+        echo "Exported $(wc -c < agents_data.json) bytes — $(python3 -c "import json; print(len(json.load(open('agents_data.json'))))"  ) total agents"
+
+    - name: Commit snapshot
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "AgentHunter Bot"
+        git add agents_data.json stats_data.json
+        git diff --staged --quiet || git commit -m "chore: update agent snapshot [skip ci]"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

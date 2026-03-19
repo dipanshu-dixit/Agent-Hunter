@@ -35,18 +35,25 @@ def health_check():
 def list_agents(
     model: Optional[str] = Query(None),
     framework: Optional[str] = Query(None),
-    limit: int = Query(100, le=1000),
+    limit: int = Query(100, le=10000),
     session: Session = Depends(get_session)
 ):
     query = select(AgentProfile)
-    
     if model:
         query = query.where(AgentProfile.model_detected == model)
     if framework:
         query = query.where(AgentProfile.framework == framework)
-    
     query = query.limit(limit)
     return session.exec(query).all()
+
+# These MUST be before /agents/{agent_id} or FastAPI matches "online"/"dead" as an int ID
+@app.get("/agents/online", response_model=List[AgentProfile])
+def get_online_agents(session: Session = Depends(get_session)):
+    return session.exec(select(AgentProfile).where(AgentProfile.status == "online")).all()
+
+@app.get("/agents/dead", response_model=List[AgentProfile])
+def get_dead_agents(session: Session = Depends(get_session)):
+    return session.exec(select(AgentProfile).where(AgentProfile.status == "dead")).all()
 
 @app.get("/agents/{agent_id}", response_model=AgentProfile)
 def get_agent(agent_id: int, session: Session = Depends(get_session)):
@@ -60,19 +67,16 @@ def get_stats(session: Session = Depends(get_session)):
     model_counts = session.exec(
         select(AgentProfile.model_detected, func.count()).group_by(AgentProfile.model_detected)
     ).all()
-    
     framework_counts = session.exec(
         select(AgentProfile.framework, func.count()).group_by(AgentProfile.framework)
     ).all()
-    
     type_counts = session.exec(
         select(AgentProfile.agent_type, func.count()).group_by(AgentProfile.agent_type)
     ).all()
-    
     return {
         "models": dict(model_counts),
         "frameworks": dict(framework_counts),
-        "agent_types": dict(type_counts)
+        "agent_types": dict(type_counts),
     }
 
 @app.post("/agents", response_model=AgentProfile)
@@ -80,7 +84,6 @@ def upsert_agent(agent_data: Dict, session: Session = Depends(get_session)):
     existing = session.exec(
         select(AgentProfile).where(AgentProfile.source_url == agent_data["source_url"])
     ).first()
-    
     if existing:
         for key, value in agent_data.items():
             if hasattr(existing, key):
@@ -89,7 +92,6 @@ def upsert_agent(agent_data: Dict, session: Session = Depends(get_session)):
     else:
         agent = AgentProfile(**agent_data)
         session.add(agent)
-    
     session.commit()
     session.refresh(agent)
     return agent
@@ -99,22 +101,12 @@ def update_agent(agent_id: int, update_data: Dict, session: Session = Depends(ge
     agent = session.get(AgentProfile, agent_id)
     if not agent:
         raise HTTPException(status_code=404, detail="Agent not found")
-    
     for key, value in update_data.items():
         if hasattr(agent, key):
             setattr(agent, key, value)
-    
     session.commit()
     session.refresh(agent)
     return agent
-
-@app.get("/agents/dead", response_model=List[AgentProfile])
-def get_dead_agents(session: Session = Depends(get_session)):
-    return session.exec(select(AgentProfile).where(AgentProfile.status == "dead")).all()
-
-@app.get("/agents/online", response_model=List[AgentProfile])
-def get_online_agents(session: Session = Depends(get_session)):
-    return session.exec(select(AgentProfile).where(AgentProfile.status == "online")).all()
 
 @app.get("/scan-state", response_model=List[ScanState])
 def get_scan_states(session: Session = Depends(get_session)):
@@ -125,7 +117,6 @@ def upsert_scan_state(state_data: Dict, session: Session = Depends(get_session))
     existing = session.exec(
         select(ScanState).where(ScanState.topic == state_data["topic"])
     ).first()
-    
     if existing:
         for key, value in state_data.items():
             if hasattr(existing, key):
@@ -135,7 +126,6 @@ def upsert_scan_state(state_data: Dict, session: Session = Depends(get_session))
     else:
         state = ScanState(**state_data)
         session.add(state)
-    
     session.commit()
     session.refresh(state)
     return state

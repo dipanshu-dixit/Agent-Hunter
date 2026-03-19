@@ -1,2 +1,3 @@
-agent_hunter.db binary
-agent_hunter.db filter=lfs merge=ours
+# JSON snapshots use normal text diffing
+agents_data.json text
+stats_data.json text

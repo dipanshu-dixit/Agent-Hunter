@@ -48,35 +48,7 @@ jobs:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     - name: Export JSON snapshot
-      run: |
-        python3 -c "
-import json, sqlite3
-
-conn = sqlite3.connect('agent_hunter.db')
-conn.row_factory = sqlite3.Row
-agents = [dict(r) for r in conn.execute('SELECT * FROM agentprofile').fetchall()]
-for a in agents:
-    if isinstance(a.get('capabilities'), str):
-        try:
-            a['capabilities'] = json.loads(a['capabilities'])
-        except:
-            a['capabilities'] = []
-conn.close()
-
-with open('agents_data.json', 'w') as f:
-    json.dump(agents, f)
-
-# stats
-from collections import Counter
-models = Counter(a.get('model_detected','unknown') for a in agents)
-frameworks = Counter(a.get('framework','unknown') for a in agents)
-types = Counter(a.get('agent_type','unknown') for a in agents)
-stats = {'models': dict(models), 'frameworks': dict(frameworks), 'agent_types': dict(types)}
-with open('stats_data.json', 'w') as f:
-    json.dump(stats, f)
-
-print(f'Exported {len(agents)} total agents to agents_data.json')
-"
+      run: python3 export_snapshot.py
 
     - name: Commit snapshot
       run: |

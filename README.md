@@ -4,8 +4,6 @@
 
 Automatically hunts, fingerprints, and catalogs every AI agent, bot, and autonomous system it can find — then lets you search, monitor, and health-check them all from a live dashboard.
 
-![AgentHunter Dashboard](https://via.placeholder.com/800x400/1a1a1a/00ff00?text=AgentHunter+Dashboard)
-
 ## 🌟 What Is AgentHunter?
 
 AgentHunter is an automated intelligence platform that continuously scans the public internet for AI agents — GitHub repos, HuggingFace models, Discord bots, known AI crawlers, and AI packages — then classifies and stores them in a searchable database.

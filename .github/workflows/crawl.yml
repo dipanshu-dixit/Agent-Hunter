@@ -58,19 +58,11 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "AgentHunter Bot"
+        git fetch origin main
+        git checkout origin/main -- . 2>/dev/null || true
+        python3 export_snapshot.py
         git add agents_data.json stats_data.json
-        git diff --staged --quiet && echo "No changes to commit" && exit 0
-
-        git commit -m "chore: update agent snapshot [skip ci]"
-
-        # Retry push up to 3 times with rebase to handle concurrent runs
-        for i in 1 2 3; do
-          git pull --rebase origin main && git push && echo "Push succeeded on attempt $i" && exit 0
-          echo "Push attempt $i failed, retrying in 5s..."
-          sleep 5
-        done
-
-        echo "All push attempts failed — snapshot committed locally but not pushed"
-        exit 1
+        git diff --staged --quiet || git commit -m "chore: update agent snapshot [skip ci]"
+        git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

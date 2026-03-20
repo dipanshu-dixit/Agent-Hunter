@@ -1,4 +1,4 @@
-# 🔭 AgentHunter — Live AI Agent Discovery Platform
+# 🔭 AgentHunter — AI Agent Discovery Platform
 
 **The internet's first open-source radar for AI agents.**
 
@@ -144,15 +144,6 @@ GitHub Actions runs `.github/workflows/crawl.yml` every 6 hours:
 
 **Result**: Database grows automatically, forever, at zero cost.
 
-## 📈 Database Growth
-
-| Time | Estimated Agents |
-|------|------------------|
-| Day 1 | ~3,900 |
-| Week 1 | ~7,000 |
-| Month 1 | ~20,000 |
-| Month 6 | ~80,000+ |
-
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
@@ -189,7 +180,6 @@ Ideas for new scanners:
 
 - ✅ **Allowed**: Personal use, learning, research
 - ❌ **Not Allowed**: Commercial use, redistribution, selling data
-- 📧 **Contact**: securematehelp@gmail.com for commercial licensing
 
 ## ⭐ Star This Repo
 
@@ -197,4 +187,4 @@ If you find this useful, star the repo — it helps others discover it and motiv
 
 ---
 
-**Built with 💙 by [@hatemonkey69](https://github.com/hatemonkey69)**
+**Built with 💙 

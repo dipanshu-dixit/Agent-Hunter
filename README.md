@@ -1,5 +1,7 @@
 # 🔭 AgentHunter — AI Agent Discovery Platform
 
+<img width="1917" height="832" alt="Image" src="https://github.com/user-attachments/assets/04df8f11-b1d3-489f-a25b-3df4b71e0701" />
+
 **The internet's first open-source radar for AI agents.**
 
 Automatically hunts, fingerprints, and catalogs every AI agent, bot, and autonomous system it can find — then lets you search, monitor, and health-check them all from a live dashboard.

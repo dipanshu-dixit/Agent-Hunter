@@ -2,11 +2,12 @@ from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel, create_engine, Session, select, func
 from typing import List, Optional, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from models.agent_profile import AgentProfile
 from models.scan_state import ScanState
+import os
 
-DATABASE_URL = "sqlite:///agent_hunter.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///agent_hunter.db")
 engine = create_engine(DATABASE_URL, echo=False)
 
 app = FastAPI(title="Agent Hunter API", version="1.0.0")
@@ -88,6 +89,7 @@ def upsert_agent(agent_data: Dict, session: Session = Depends(get_session)):
         for key, value in agent_data.items():
             if hasattr(existing, key):
                 setattr(existing, key, value)
+        existing.last_seen = datetime.now(timezone.utc).replace(tzinfo=None)
         agent = existing
     else:
         agent = AgentProfile(**agent_data)
@@ -121,7 +123,7 @@ def upsert_scan_state(state_data: Dict, session: Session = Depends(get_session))
         for key, value in state_data.items():
             if hasattr(existing, key):
                 setattr(existing, key, value)
-        existing.last_updated = datetime.utcnow()
+        existing.last_updated = datetime.now(timezone.utc).replace(tzinfo=None)
         state = existing
     else:
         state = ScanState(**state_data)

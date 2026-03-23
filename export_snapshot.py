@@ -1,18 +1,21 @@
 """Export all agents from agent_hunter.db to agents_data.json and stats_data.json."""
 import json
 import sqlite3
+import os
 from collections import Counter
 
-conn = sqlite3.connect('agent_hunter.db')
-conn.row_factory = sqlite3.Row
-agents = [dict(r) for r in conn.execute('SELECT * FROM agentprofile').fetchall()]
+DB_PATH = os.getenv('DATABASE_PATH', 'agent_hunter.db')
+
+with sqlite3.connect(DB_PATH) as conn:
+    conn.row_factory = sqlite3.Row
+    agents = [dict(r) for r in conn.execute('SELECT * FROM agentprofile').fetchall()]
+
 for a in agents:
     if isinstance(a.get('capabilities'), str):
         try:
             a['capabilities'] = json.loads(a['capabilities'])
-        except Exception:
+        except (json.JSONDecodeError, ValueError):
             a['capabilities'] = []
-conn.close()
 
 with open('agents_data.json', 'w') as f:
     json.dump(agents, f)

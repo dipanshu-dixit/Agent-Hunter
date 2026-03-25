@@ -216,10 +216,8 @@ This project uses a dual license:
 
 - **Code** → MIT License (free to use, modify, distribute)
 - **Dataset** → Proprietary (personal use only)
-- 📧 Commercial dataset licensing: securematehelp@gmail.com
+- 📧 Commercial dataset licensing: dipanshudixit206.com
 
 See [LICENSE](LICENSE) for full terms.
 
----
 
-**Built with 💙 by [@dipanshu-dixit](https://github.com/dipanshu-dixit)**

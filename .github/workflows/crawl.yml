@@ -41,6 +41,16 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Validate Telegram credentials
+      continue-on-error: true
+      run: |
+        echo "Checking Telegram bot token..."
+        RESULT=$(curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe")
+        echo "$RESULT"
+        echo "$RESULT" | grep -q '"ok":true' && echo "✅ Token valid" || echo "❌ Token invalid — check TELEGRAM_BOT_TOKEN secret"
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
     - name: Run scan
       continue-on-error: true
       run: python -u run_scan.py

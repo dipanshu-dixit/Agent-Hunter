@@ -4,7 +4,9 @@
 
 Automatically hunts, fingerprints, and catalogs every AI agent, bot, and autonomous system it can find — then stores them in a searchable database and pushes the live dataset to a public HuggingFace dashboard.
 
-**Think: Shodan, but for AI agents.**
+<img width="1919" height="836" alt="Image" src="https://github.com/user-attachments/assets/03088310-068a-4e4c-9ec9-990e688520a1" />
+<img width="1919" height="802" alt="Image" src="https://github.com/user-attachments/assets/d96db919-ab83-4b2a-be07-2dacc4a008ee" />
+
 
 ## ✨ Features
 
